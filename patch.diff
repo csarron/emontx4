@@ -1,0 +1,50 @@
+diff --git a/firmware/EmonTxV4/EmonTxV4.ino b/firmware/EmonTxV4/EmonTxV4.ino
+index f33580b..8e15777 100644
+--- a/firmware/EmonTxV4/EmonTxV4.ino
++++ b/firmware/EmonTxV4/EmonTxV4.ino
+@@ -35,7 +35,7 @@ v1.5.7: Fix disabling of temperature sensing at startup if none detected
+ 
+ #define RadioFormat RFM69_LOW_POWER_LABS
+ 
+-const char *firmware_version = {"1.5.7\n\r"};
++const char *firmware_version = {"1.5.8\n\r"};
+ /*
+ 
+ emonhub.conf node decoder (nodeid is 17 when switch is off, 18 when switch is on)
+@@ -150,7 +150,7 @@ DeviceAddress allAddresses[] = {
+ 
+ int allTemps[MAX_TEMPS];                                   // Array to receive temperature measurements
+ 
+-bool  USA=false;
++bool  USA=true;
+ 
+ bool calibration_enable = true;                           // Enable on-line calibration when running. 
+                                                            // For safety, thus MUST default to false. (Required due to faulty ESP8266 software.)
+diff --git a/firmware/EmonTxV4/EmonTxV4_config.ino b/firmware/EmonTxV4/EmonTxV4_config.ino
+index c6f0295..d55e1b3 100644
+--- a/firmware/EmonTxV4/EmonTxV4_config.ino
++++ b/firmware/EmonTxV4/EmonTxV4_config.ino
+@@ -206,8 +206,8 @@ void handle_conf(char *input, byte len) {
+        *  [x] = a floating point number for the datalogging period in s
+        */
+       k2 = atof(input+1);
+-      //EmonLibCM_datalog_period(k2); 
+-      //EEProm.period = k2;
++      EmonLibCM_datalog_period(k2); 
++      EEProm.period = k2;
+       Serial.print(F("datalog period: ")); Serial.print(k2);Serial.println(F(" s"));
+       break;
+     case 'e':
+diff --git a/firmware/EmonTxV4/platformio.ini b/firmware/EmonTxV4/platformio.ini
+index 47f1254..9d0bf56 100644
+--- a/firmware/EmonTxV4/platformio.ini
++++ b/firmware/EmonTxV4/platformio.ini
+@@ -21,6 +21,8 @@ lib_deps =
+   https://github.com/openenergymonitor/RFM69_LPL
+   https://github.com/openenergymonitor/emonEProm#avrdb
+   https://github.com/openenergymonitor/EmonLibCM#avrdb
++  https://github.com/openenergymonitor/emonLibDB
++  https://github.com/openenergymonitor/RFM69_JeeLib#avrdb
+ 
+ [env:default]
+ build_flags = -DUSING_OPTIBOOT  ; Upload via uart
